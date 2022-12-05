@@ -16,14 +16,27 @@ def read_parse_input(fname):
 
     stcs = [list(st[1::4]) for st in stacks.split('\n')]
 
+    # rotate list of lists
     stack_list = []
     for row in zip(*reversed(stcs[:-1])):
-        row = list(filter(lambda x: x != ' ', list(row)))
-        stack_list.append(row)
+        stack_list.append(list(filter(lambda x: x != ' ', list(row))))
 
     instructions = instructions.split('\n')
 
     return instructions, stack_list
+
+
+def stackem(instructions, stacks, part=1):
+    for instruc in instructions:
+        nr, s1, s2 = integers(instruc)
+        if part == 1:
+            stacks[s2-1] =  stacks[s2-1] + stacks[s1-1][-nr:][::-1]
+        else:
+            stacks[s2-1] =  stacks[s2-1] + stacks[s1-1][-nr:]
+        stacks[s1-1] =  stacks[s1-1][:-nr]
+
+    solution = ''.join(stack.pop() for stack in stacks)
+    print(solution)
 
 
 fname = 'day05'
@@ -31,25 +44,5 @@ fname = 'day05'
 instructions, stacks = read_parse_input(fname)
 
 stacks_orig = copy.deepcopy(stacks)
-
-# part 1
-for instruc in instructions:
-    nr, s1, s2 = integers(instruc)
-    take = stacks[s1-1][-nr:]
-    stacks[s1-1] =  stacks[s1-1][:-nr]
-    stacks[s2-1] =  stacks[s2-1] + take[::-1]
-
-part1 = ''.join(stack.pop() for stack in stacks)
-print(part1)
-
-
-# part 2
-stacks = stacks_orig
-for instruc in instructions:
-    nr, s1, s2 = integers(instruc)
-    take = stacks[s1-1][-nr:]
-    stacks[s1-1] =  stacks[s1-1][:-nr]
-    stacks[s2-1] =  stacks[s2-1] + take
-
-part1 = ''.join(stack.pop() for stack in stacks)
-print(part1)
+stackem(instructions, stacks, part=1)
+stackem(instructions, stacks_orig, part=2)
