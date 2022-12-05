@@ -6,37 +6,24 @@ Created on Mon Dec  5 08:48:26 2022
 """
 
 from aoc import *
-import pandas as pd
-from collections import deque
 import copy
 
 
 def read_parse_input(fname):
     # read input
-    puzzle = read_input(fname)
+    with open(f"inputs/{fname}.txt") as f:
+        stacks, instructions = f.read().split('\n\n')
 
-    # find empty row
-    idx_empty = [i for i,x in enumerate(puzzle) if not x][0]
+    stcs = [list(st[1::4]) for st in stacks.split('\n')]
 
-    # find number of stacks
-    nr_stacks = integers(puzzle[idx_empty-1])[-1]
+    stack_list = []
+    for row in zip(*reversed(stcs[:-1])):
+        row = list(filter(lambda x: x != ' ', list(row)))
+        stack_list.append(row)
 
-    # get instruction part
-    instructions = puzzle[idx_empty+1:]
+    instructions = instructions.split('\n')
 
-    # get stacks
-    stacks_df = pd.read_fwf(f'./inputs/{fname}.txt', header=None,
-                         widths=[4]*nr_stacks, nrows=idx_empty-1)
-    stacks_df[stacks_df.isnull()] = ''
-    stacks_df = stacks_df.iloc[::-1, :]
-
-    # sort stacks into deque container
-    stacks = []
-    for n, stack in stacks_df.iteritems():
-        temp = [ch[1] for ch in stack if ch != '']
-        stacks.append(deque(temp))
-
-    return instructions, stacks
+    return instructions, stack_list
 
 
 fname = 'day05'
@@ -48,9 +35,9 @@ stacks_orig = copy.deepcopy(stacks)
 # part 1
 for instruc in instructions:
     nr, s1, s2 = integers(instruc)
-    for n in range(nr):
-        element = stacks[s1-1].pop()
-        stacks[s2-1].append(element)
+    take = stacks[s1-1][-nr:]
+    stacks[s1-1] =  stacks[s1-1][:-nr]
+    stacks[s2-1] =  stacks[s2-1] + take[::-1]
 
 part1 = ''.join(stack.pop() for stack in stacks)
 print(part1)
@@ -60,11 +47,9 @@ print(part1)
 stacks = stacks_orig
 for instruc in instructions:
     nr, s1, s2 = integers(instruc)
-    buffer = ''
-    for n in range(nr):
-        element = stacks[s1-1].pop()
-        buffer += element
-    stacks[s2-1].extend(buffer[::-1])
+    take = stacks[s1-1][-nr:]
+    stacks[s1-1] =  stacks[s1-1][:-nr]
+    stacks[s2-1] =  stacks[s2-1] + take
 
-part2 = ''.join(stack.pop() for stack in stacks)
-print(part2)
+part1 = ''.join(stack.pop() for stack in stacks)
+print(part1)
