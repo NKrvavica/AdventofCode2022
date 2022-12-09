@@ -16,26 +16,18 @@ directions = {'R': np.array([0, 1]), 'L': np.array([0, -1]),
 
 def move_rope(N, motions):
     knots = np.zeros((N, 2))
-
     visited = set()
     visited.add(knots[-1, 0] + knots[-1, 1]*1j)
-
-    motion = motions[0]
-
     for motion in motions:
         direc, step = motion.split(' ')
         for _ in range(int(step)):
             knots[0, :] += directions[direc]
-
             for rope in range(1, len(knots)):
                 dist = knots[rope-1, :] - knots[rope, :]
-
                 if (abs(dist) > 1).any():
                     knots[rope, :] += np.array([sign(dist[0]), sign(dist[1])])
-
                 if rope == N-1:
                     visited.add(knots[rope, 0] + knots[rope, 1]*1j)
-
     return len(visited)
 
 
