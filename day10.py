@@ -11,15 +11,14 @@ import matplotlib.pyplot as plt
 
 
 def add_strength(cycle, sum_strength):
-    if cycle % 20 == 0:
+    if cycle % 40 == 20:
         signal_strength = cycle * X
-        if cycle in CYCLES:
-            sum_strength += signal_strength
+        sum_strength += signal_strength
     return sum_strength
 
 
 def draw_pixel(cycle, crt, X):
-    position = cycle % 40
+    position = (cycle) % 40
     if X <= position < X + 3:
         crt[cycle-1] = 1
     else:
@@ -30,7 +29,6 @@ def draw_pixel(cycle, crt, X):
 program = read_input('day10')
 
 # part 1
-CYCLES = [20, 60, 100, 140, 180, 220]
 X, cycle, sum_strength = 1, 0, 0
 for ins in program:
     if ins == 'noop':
