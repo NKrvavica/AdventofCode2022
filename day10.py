@@ -18,9 +18,7 @@ def add_strength(cycle, sum_strength):
 
 
 def draw_pixel(cycle, crt, X):
-    position = (cycle-1) % 40
-    print(position, X)
-    if X-1 <= position <= X + 1:
+    if X-1 <= (cycle-1) % 40 <= X + 1:
         crt[cycle-1] = 1
     else:
         crt[cycle-1] = 0
